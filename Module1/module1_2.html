@@ -1,0 +1,50 @@
+<html>
+<head>
+	<title>Module1_2</title>
+	<script src="Three.js"></script>
+	<script>
+	window.onload = function() 
+	{
+		var width = 500,
+		height = 300;
+		
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(width, height);
+		document.body.appendChild(renderer.domElement);
+		
+		var scene = new THREE.Scene();
+
+		// Camera properties set for maybe camera and maybe for later use. Easier to config.
+		var view_angle = 35,
+		aspect = width / height,
+		near = 0.1,
+		far = 10000;
+		
+		// Create camera by PerspectiveCamera 
+		var camera = new THREE.PerspectiveCamera(view_angle, aspect, near, far);
+		camera.position.set( -30, 17, 33);
+		camera.lookAt(scene.position);
+		
+		// New cube and the color of it
+		var cube = new THREE.CubeGeometry(15, 15, 15);
+		var material = new THREE.MeshLambertMaterial(
+		{
+			color: 0xFF0000
+		}
+		);
+		
+		// Mesh for the cube that adds the material.
+		var mesh = new THREE.Mesh(cube, material);
+		scene.add(mesh);
+		
+		// Lightning with PointLightning
+		var Light = new THREE.PointLight(0xFF0000);
+		Light.position.set(1, 16, 16);
+		scene.add(Light);
+		
+		renderer.render(scene, camera);
+	};
+	</script>
+	</head>
+<body></body>
+</html>

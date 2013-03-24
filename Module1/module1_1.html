@@ -1,0 +1,104 @@
+<html>
+  <head>
+		<body onload='start();'>
+			<canvas id='glcanvas' width=550 height=550></canvas>
+		</body>
+    <script type='text/javascript'>
+
+// Begin the WebGL context
+var gl;
+
+function start()
+{
+	// Get the area from canvas id
+	var canvas = document.getElementById("glcanvas");
+	
+	gl = null;
+	
+	// Go for various error messages
+	try 
+	{
+		gl = canvas.getContext('experimental-webgl');
+	}
+	catch(e)
+	{
+		alert('Exception catched in getContext: '+e.toString());
+		return;
+	}
+    if(!gl)
+	{
+		alert('Unable to create Web GL context');
+		return;
+	}
+	
+
+	
+	// Clear the canvas colour and screen
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	
+	// Begin the triangle shader
+	var shader = gl.createShader(gl.FRAGMENT_SHADER);
+	gl.shaderSource(shader, 'void main(void) {gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}');
+	gl.compileShader(shader);
+	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) 
+	{
+		alert('Error during fragment shader compilation:\n' + gl.getShaderInfoLog(shader));
+		return;
+	}
+
+	// Create vertex shader and init void main(void)
+	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+	gl.shaderSource(vertexShader, 'attribute vec2 pos; void main(void) { gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);}');
+	gl.compileShader(vertexShader);
+	if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) 
+	{
+		alert('Error during vertex shader compilation:\n' + gl.getShaderInfoLog(vertexShader));
+		return;
+	}
+
+	// Create the program and pass shaders
+	var program = gl.createProgram();
+	gl.attachShader(program, shader);
+	gl.attachShader(program, vertexShader);
+	gl.linkProgram(program);
+	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) 
+	{
+		alert('Error during program linking:\n' + gl.getProgramInfoLog(program));
+		return;
+	}
+	// Program validation
+	gl.validateProgram(program);
+	if(!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) 
+	{
+		alert('Error during program validation:\n' + gl.getProgramInfoLog(program));
+		return;
+	}
+	gl.useProgram(program);
+	
+	// Vertex shader attribute address.
+	var vertexAttrib = gl.getAttribLocation(program, "pos");
+	if(vertexAttrib == -1)
+	{
+		alert('Error during attribute address retrieval');
+		return;
+	}
+	gl.enableVertexAttribArray(vertexAttrib);
+	
+	// Creates new vertex bugger
+	var vertexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+	
+	// Buffer the array which is made for vertices
+	var vertices = new Float32Array([0.0, 0.5, -0.5, 
+									-0.5, 0.5, -0.5]);
+	gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+	gl.vertexAttribPointer(vertexAttrib, 2, gl.FLOAT, false, 0, 0);
+	
+	// Finally draw everything
+	gl.drawArrays(gl.TRIANGLES, 0, 3);
+	gl.flush();
+}
+	</script>
+	</head>
+</html>
