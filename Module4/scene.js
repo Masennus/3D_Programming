@@ -313,7 +313,7 @@ function hierachiceJoints()
 	hand.add(finger3);
 	hand.add(finger4);
 }
-	
+
 function animateHand() 
 {
 	shoulder.rotation.z = Math.cos(calculate);
